@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Food Vocabulary · Vocabulario de comida</title>
+<style>
+:root{--bg:#f6faf4;--card:#fff;--ink:#1d2b1f;--mut:#5d6e60;--ac:#2f9e44;--ac2:#e8f6ea;--hl:#e0531a;--bd:#d5e5d6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a12;--card:#18261b;--ink:#e8f2ea;--mut:#9fb5a3;--ac:#4ccb67;--ac2:#1f3324;--bd:#2c432f}}
+:root[data-theme="dark"]{--bg:#0f1a12;--card:#18261b;--ink:#e8f2ea;--mut:#9fb5a3;--ac:#4ccb67;--ac2:#1f3324;--bd:#2c432f}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:800px;margin:0 auto;padding:16px}
+h1{font-size:1.6rem;margin:.2em 0}h1 span{color:var(--ac)}
+h2{font-size:1.1rem;color:var(--ac);margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin:12px 0}
+.tr{color:var(--mut);font-size:.88rem}
+select,button,input{font:inherit;color:var(--ink)}
+select,input{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:8px;max-width:100%}
+input{width:100%}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.seg button{background:var(--card);border:1px solid var(--bd);padding:6px 12px;border-radius:8px;cursor:pointer}
+.seg button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.tst{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 16px;cursor:pointer}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0}
+.tab{flex:none;background:var(--card);border:2px solid var(--bd);border-radius:12px;padding:8px 12px;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:var(--ac2);border:1px solid var(--bd);border-radius:12px;padding:8px 10px;cursor:pointer;text-align:center;min-width:92px;-webkit-tap-highlight-color:transparent}
+.chip .w{font-weight:600}.chip .t{font-size:.78rem;color:var(--mut)}
+.chip:active,.chip.play{background:var(--ac);color:#fff}.chip.play .t,.chip:active .t{color:#fff}
+.row{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--bd)}
+.row:first-of-type{border-top:0}
+.txt{flex:1}.txt .en{font-size:1.08rem}
+.wd{cursor:pointer;border-radius:5px;padding:0 1px;border-bottom:2px dotted var(--ac)}
+.wd:active,.wd.play{background:var(--ac2)}
+.spk{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:var(--ac);color:#fff;font-size:1.3rem;cursor:pointer}
+.spk.play{outline:3px solid var(--hl)}
+footer{text-align:center;color:var(--mut);font-size:.9rem;padding:18px 0 28px}
+</style>
+</head>
+<body>
+<main>
+<h1>Food <span>Vocabulary</span></h1>
+<p class="tr" style="margin:0">Vocabulario de comida · <span id="cnt"></span> palabras</p>
+
+<div class="card">
+  <p style="margin:0 0 10px">👆 <b style="color:var(--ac)">Toca cualquier tarjeta con 🔊</b> para escuchar la palabra. En las oraciones toca cada palabra subrayada, o el <b style="color:var(--ac)">botón redondo</b> para oír la oración completa.</p>
+  <div class="bar"><button class="tst" id="tst">🔊 Probar sonido</button>
+  <label for="vz">Voz:</label><select id="vz"></select>
+  <span class="seg"><button id="v1" class="on">Normal</button><button id="v2">Lenta</button></span></div>
+  <p id="msg" class="tr" style="margin:8px 0 0"></p>
+  <p class="tr" style="margin:6px 0 0">Si no suena: sube el volumen multimedia, quita el modo silencio y abre la página en Chrome.</p>
+</div>
+
+<div class="tabs" id="tabs"></div>
+<input id="q" type="search" placeholder="🔍 Buscar / Search (English o español)">
+<div id="box"></div>
+<footer>Docente: Jorge Ñañez · Área: Inglés</footer>
+</main>
+<script>
+var CATS=[
+{n:"Proteínas · Proteins",i:"🍗",g:[
+["Meat &amp; poultry · Carnes y aves","chicken=pollo;chicken breast=pechuga de pollo;drumstick=muslo de pollo;beef=carne de res;steak=bistec;ground beef=carne molida;pork=cerdo;ribs=costillas;lamb=cordero;turkey=pavo;duck=pato;ham=jamón;bacon=tocino;sausage=salchicha;hot dog=perro caliente;meatballs=albóndigas;liver=hígado"],
+["Seafood · Pescados y mariscos","fish=pescado;tuna=atún;salmon=salmón;cod=bacalao;sardines=sardinas;shrimp=camarón;crab=cangrejo;lobster=langosta;squid=calamar;octopus=pulpo;mussels=mejillones;oysters=ostras"],
+["Eggs, dairy &amp; plant protein · Huevos, lácteos y legumbres","egg=huevo;cheese=queso;milk=leche;yogurt=yogur;cottage cheese=requesón;beans=frijoles / caraotas;lentils=lentejas;chickpeas=garbanzos;peas=arvejas;tofu=tofu;peanuts=maní;almonds=almendras;nuts=frutos secos"]],
+s:[["I eat chicken and rice for lunch.","Almuerzo pollo con arroz."],["Eggs are a good source of protein.","Los huevos son una buena fuente de proteína."],["My mother cooks fish every Friday.","Mi mamá cocina pescado todos los viernes."],["Do you like beans or lentils?","¿Te gustan los frijoles o las lentejas?"],["He doesn't eat pork.","Él no come cerdo."],["We have shrimp and salmon for dinner.","Cenamos camarones y salmón."]]},
+{n:"Frutas y vegetales · Fruits & Vegetables",i:"🍎",g:[
+["Fruits · Frutas","apple=manzana;banana=cambur / banano;orange=naranja;lemon=limón;lime=lima;grapes=uvas;strawberry=fresa;blueberry=arándano;raspberry=frambuesa;blackberry=mora;watermelon=sandía;melon=melón;pineapple=piña;mango=mango;papaya=lechosa / papaya;peach=durazno;pear=pera;plum=ciruela;cherry=cereza;apricot=albaricoque;coconut=coco;kiwi=kiwi;pomegranate=granada;fig=higo;avocado=aguacate;guava=guayaba;passion fruit=parchita / maracuyá;grapefruit=toronja;tangerine=mandarina;dates=dátiles;raisins=pasas;plantain=plátano"],
+["Vegetables · Vegetales","tomato=tomate;potato=papa;sweet potato=batata;cassava=yuca;onion=cebolla;garlic=ajo;carrot=zanahoria;lettuce=lechuga;cabbage=repollo;broccoli=brócoli;cauliflower=coliflor;spinach=espinaca;cucumber=pepino;bell pepper=pimentón;corn=maíz;pumpkin=auyama / calabaza;zucchini=calabacín;eggplant=berenjena;celery=apio;beet=remolacha;radish=rábano;mushroom=champiñón;green beans=vainitas;cilantro=cilantro;asparagus=espárrago;leek=puerro;turnip=nabo;salad=ensalada"]],
+s:[["An apple a day keeps the doctor away.","Una manzana al día mantiene alejado al doctor."],["I want a banana and two oranges.","Quiero un cambur y dos naranjas."],["She puts tomatoes and onions in the salad.","Ella pone tomates y cebollas en la ensalada."],["Carrots and spinach are very healthy.","La zanahoria y la espinaca son muy saludables."],["We buy fresh vegetables at the market.","Compramos vegetales frescos en el mercado."],["Strawberries and grapes are my favorite fruits.","Las fresas y las uvas son mis frutas favoritas."]]},
+{n:"Grasas · Fats",i:"🫒",g:[
+["Oils &amp; spreads · Aceites y untables","oil=aceite;olive oil=aceite de oliva;vegetable oil=aceite vegetal;sunflower oil=aceite de girasol;coconut oil=aceite de coco;butter=mantequilla;margarine=margarina;lard=manteca de cerdo;mayonnaise=mayonesa;peanut butter=mantequilla de maní;cream=crema de leche;sour cream=crema agria;whipped cream=crema batida;salad dressing=aderezo"],
+["Healthy fats &amp; others · Grasas saludables y otros","fat=grasa;avocado=aguacate;olives=aceitunas;nuts=frutos secos;walnuts=nueces;cashews=merey;almonds=almendras;sesame seeds=semillas de ajonjolí;sunflower seeds=semillas de girasol;chia seeds=semillas de chía;coconut milk=leche de coco;cheese=queso;chocolate=chocolate;ice cream=helado;fried food=comida frita;french fries=papas fritas;pork rinds=chicharrón"]],
+s:[["Olive oil is healthier than butter.","El aceite de oliva es más saludable que la mantequilla."],["Don't eat too much fried food.","No comas demasiada comida frita."],["I spread peanut butter on my toast.","Unto mantequilla de maní en mi tostada."],["Avocados and nuts have healthy fats.","El aguacate y los frutos secos tienen grasas saludables."],["She fries the eggs in a little oil.","Ella fríe los huevos en un poco de aceite."]]},
+{n:"Harinas · Flours &amp; Grains",i:"🍞",g:[
+["Flours &amp; grains · Harinas y cereales","flour=harina;wheat flour=harina de trigo;corn flour=harina de maíz;wheat=trigo;corn=maíz;rice=arroz;oats=avena;oatmeal=avena cocida;barley=cebada;quinoa=quinua;couscous=cuscús;cereal=cereal;dough=masa"],
+["Bread &amp; baked goods · Panes y horneados","bread=pan;toast=tostada;bun=pan de hamburguesa;roll=panecillo;sandwich=sándwich;tortilla=tortilla;arepa=arepa;empanada=empanada;croissant=cruasán;muffin=magdalena;pancake=panqueca;waffle=wafle;cake=torta / pastel;pie=tarta;cookie=galleta dulce;cracker=galleta salada;pizza=pizza"],
+["Pasta &amp; snacks · Pastas y meriendas","pasta=pasta;spaghetti=espagueti;noodles=fideos;macaroni=macarrones;lasagna=lasaña;popcorn=cotufas / palomitas;chips=papitas fritas;pretzel=pretzel"]],
+s:[["We eat bread with butter for breakfast.","Desayunamos pan con mantequilla."],["She makes arepas with corn flour.","Ella hace arepas con harina de maíz."],["I would like a plate of spaghetti, please.","Quisiera un plato de espagueti, por favor."],["Rice and pasta are carbohydrates.","El arroz y la pasta son carbohidratos."],["My brother eats oatmeal every morning.","Mi hermano come avena todas las mañanas."],["Mix the flour with water to make the dough.","Mezcla la harina con agua para hacer la masa."]]},
+{n:"Líquidos · Liquids",i:"🥤",g:[
+["Drinks · Bebidas","water=agua;sparkling water=agua con gas;coconut water=agua de coco;milk=leche;juice=jugo;orange juice=jugo de naranja;apple juice=jugo de manzana;lemonade=limonada;coffee=café;tea=té;iced tea=té helado;hot chocolate=chocolate caliente;soda=refresco;milkshake=batido de leche;smoothie=batido de frutas;sports drink=bebida deportiva;energy drink=bebida energética;malt drink=malta;punch=ponche;ice=hielo;a glass of=un vaso de;a cup of=una taza de;a bottle of=una botella de"],
+["Soups, sauces &amp; more · Sopas, salsas y más","soup=sopa;broth=caldo;vinegar=vinagre;honey=miel;syrup=sirope;sauce=salsa;ketchup=salsa de tomate;mustard=mostaza;soy sauce=salsa de soya;hot sauce=salsa picante;condensed milk=leche condensada;gravy=salsa de carne"]],
+s:[["I drink eight glasses of water a day.","Bebo ocho vasos de agua al día."],["Would you like coffee or tea?","¿Quieres café o té?"],["The soup is hot, be careful.","La sopa está caliente, ten cuidado."],["She drinks orange juice with breakfast.","Ella toma jugo de naranja con el desayuno."],["Add a little vinegar and oil to the salad.","Agrega un poco de vinagre y aceite a la ensalada."],["Can I have a cup of hot chocolate, please?","¿Me das una taza de chocolate caliente, por favor?"]]}
+];
+
+function $(i){return document.getElementById(i)}
+function mk(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e}
+function msg(t){$("msg").textContent=t}
+function clean(s){return s.replace(/[^A-Za-z'\-]/g,"")}
+
+var voices=[],voice=null,rate=0.9,synth=window.speechSynthesis,cur=null;
+function pickVoice(){
+  if(!synth)return;
+  voices=synth.getVoices().filter(function(v){return /^en[-_]/i.test(v.lang)});
+  var sel=$("vz");sel.innerHTML="";
+  if(!voices.length)return;
+  var pref=[/google us english/i,/natural|neural|online/i,/samantha|aria|jenny|zira|karen|serena|allison/i,/en[-_]US/i];
+  function score(v){for(var i=0;i<pref.length;i++){if(pref[i].test(v.name)||pref[i].test(v.lang))return 10-i}return 0}
+  voices.sort(function(a,b){return score(b)-score(a)});
+  voices.forEach(function(v,i){var o=mk("option");o.value=i;o.textContent=v.name+" ("+v.lang+")";sel.appendChild(o)});
+  voice=voices[0];
+}
+if(synth){pickVoice();synth.onvoiceschanged=pickVoice}
+$("vz").onchange=function(){voice=voices[this.value]};
+$("v1").onclick=function(){rate=0.9;this.classList.add("on");$("v2").classList.remove("on")};
+$("v2").onclick=function(){rate=0.6;this.classList.add("on");$("v1").classList.remove("on")};
+$("tst").onclick=function(){msg("Voces en inglés detectadas: "+voices.length+(synth?"":" (este navegador no tiene síntesis de voz)"));say("Good morning! Let's learn food vocabulary.",this)};
+
+function online(text,el){
+  try{
+    if(cur)cur.pause();
+    cur=new Audio("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q="+encodeURIComponent(text));
+    cur.playbackRate=rate<0.8?0.75:1;
+    if(el){el.classList.add("play");cur.onended=cur.onerror=function(){el.classList.remove("play")}}
+    cur.play().catch(function(){msg("No se pudo reproducir el audio. Abre la página en Chrome con internet y sube el volumen.");if(el)el.classList.remove("play")});
+  }catch(e){if(el)el.classList.remove("play")}
+}
+function say(text,el){
+  if(cur)cur.pause();
+  if(!synth){msg("Este navegador no tiene voz integrada; usando audio en línea.");online(text,el);return}
+  var started=false,done=false;
+  function go(){
+    var u=new SpeechSynthesisUtterance(text);
+    u.lang="en-US";if(voice){u.voice=voice;u.lang=voice.lang}
+    u.rate=rate;u.pitch=1;
+    u.onstart=function(){started=true};
+    u.onend=function(){done=true;if(el)el.classList.remove("play")};
+    u.onerror=function(e){
+      var was=done;done=true;
+      if(e.error!=="canceled"&&e.error!=="interrupted")msg("Error de voz: "+e.error);
+      if(el)el.classList.remove("play");
+      if(!was&&!started&&e.error!=="canceled"&&e.error!=="interrupted")online(text,el);
+    };
+    if(el)el.classList.add("play");
+    synth.speak(u);
+    setTimeout(function(){if(!started&&!done){done=true;synth.cancel();msg("La voz del teléfono no respondió; probando audio en línea…");online(text,el)}},1500);
+  }
+  if(synth.speaking||synth.pending){synth.cancel();setTimeout(go,80)}else go();
+}
+
+var total=0;
+CATS.forEach(function(c){c.g.forEach(function(g){total+=g[1].split(";").length})});
+$("cnt").textContent=total;
+
+var curTab=0;
+function show(k){
+  curTab=k;$("q").value="";
+  var tabs=document.querySelectorAll(".tab");
+  tabs.forEach(function(t,i){t.classList.toggle("on",i===k)});
+  var box=$("box");box.innerHTML="";
+  var c=CATS[k];
+  c.g.forEach(function(g){
+    var card=mk("div","card grp","<h2>"+g[0]+"</h2>"),ch=mk("div","chips");
+    g[1].split(";").forEach(function(p){
+      var a=p.split("=");
+      var el=mk("div","chip",'<div class="w">🔊 '+a[0]+'</div><div class="t">'+a[1]+"</div>");
+      el.dataset.q=(a[0]+" "+a[1]).toLowerCase();
+      el.onclick=function(){say(a[0],el)};
+      ch.appendChild(el);
+    });
+    card.appendChild(ch);box.appendChild(card);
+  });
+  var sc=mk("div","card","<h2>Sentences · Oraciones</h2>");
+  c.s.forEach(function(p,i){
+    var r=mk("div","row"),t=mk("div","txt"),en=mk("div","en");
+    en.appendChild(mk("span","tr",(i+1)+". "));
+    p[0].split(" ").forEach(function(w){
+      var s=mk("span","wd",w);s.onclick=function(){say(clean(w),s)};
+      en.appendChild(s);en.appendChild(document.createTextNode(" "));
+    });
+    t.appendChild(en);t.appendChild(mk("div","tr",p[1]));
+    var b=mk("button","spk","🔊");b.setAttribute("aria-label","Escuchar oración completa");
+    b.onclick=function(){say(p[0],b)};
+    r.appendChild(t);r.appendChild(b);sc.appendChild(r);
+  });
+  box.appendChild(sc);
+  filter();
+}
+function filter(){
+  var v=$("q").value.toLowerCase().trim();
+  document.querySelectorAll(".chip").forEach(function(e){e.style.display=e.dataset.q.indexOf(v)<0?"none":""});
+  document.querySelectorAll(".grp").forEach(function(g){
+    var any=false;g.querySelectorAll(".chip").forEach(function(e){if(e.style.display!=="none")any=true});
+    g.style.display=any?"":"none";
+  });
+}
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"")}
+function search(){
+  var v=norm($("q").value.trim());
+  if(!v){show(curTab);return}
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on")});
+  var box=$("box");box.innerHTML="";var n=0;
+  CATS.forEach(function(c){c.g.forEach(function(g){
+    var items=g[1].split(";").filter(function(p){return norm(p).indexOf(v)>=0});
+    if(!items.length)return;
+    n+=items.length;
+    var card=mk("div","card","<h2>"+c.i+" "+g[0]+"</h2>"),ch=mk("div","chips");
+    items.forEach(function(p){
+      var a=p.split("=");
+      var el=mk("div","chip",'<div class="w">🔊 '+a[0]+'</div><div class="t">'+a[1]+"</div>");
+      el.onclick=function(){say(a[0],el)};
+      ch.appendChild(el);
+    });
+    card.appendChild(ch);box.appendChild(card);
+  })});
+  if(!n)box.appendChild(mk("div","card tr","No se encontró · Not found"));
+}
+$("q").oninput=search;
+CATS.forEach(function(c,i){
+  var t=mk("button","tab",c.i+" "+c.n);t.onclick=function(){show(i)};$("tabs").appendChild(t);
+});
+show(0);
+</script>
+</body>
+</html>
